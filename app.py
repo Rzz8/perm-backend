@@ -71,6 +71,9 @@ def predict_permvalue(data: PermValue):
     X = mmsx.transform(X)
     prediction = np.array([regressor.predict(X)])
     prediction = mmsy.inverse_transform(prediction)[0,0]
+    prediction = round(prediction, 2)
+    unit = "md"
+    prediction = str(prediction) + " " + unit
     return {"prediction": prediction}
 
 # 5. Run the API with uvicorn
