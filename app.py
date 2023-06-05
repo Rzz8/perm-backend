@@ -21,6 +21,21 @@ class PermValue(BaseModel):
     PG: float
     FL: float
     FLR: float
+    FG: float
+
+def to_categorical(X, classes=[0,1,2]):
+    classes = np.array(classes)
+    classes = classes.reshape(1, classes.shape[0])
+    X = X.reshape(X.shape[0], 1)
+    out = (X.astype(int)==classes).astype(int)
+    return out
+
+def add_categorical(X, column=-1, classes=[0,1,2]):
+    # Assumes X is 2D
+    c = column if column >= 0 else (X.shape[1] + column)
+    X_cat = to_categorical(X[:, c], classes=classes)
+    X_new = np.concatenate((X[:,:c], X_cat, X[:,(c+1):]), axis=1)
+    return X_new
 
 # 2. Create the app object
 app = FastAPI()
@@ -33,7 +48,7 @@ app.add_middleware(CORSMiddleware,
                    allow_methods=["*"],
                    allow_headers=["*"])
 
-pickle_in = open("ann_skl.pkl", "rb")
+pickle_in = open("ann_form_skl.pkl", "rb")
 regressor = pickle.load(pickle_in)
 pickle_in.close()
 
@@ -67,13 +82,16 @@ def predict_permvalue(data: PermValue):
     PG =  data['PG']
     FL = data['FL']    
     FLR = data['FLR']
-    X = np.array([[BD, HL, ROP, IMV, DP, DS, GR, RSS, RSD, RSM, PG, FL, FLR]])
+    FG = data['FG']
+    X = np.array([[BD, HL, ROP, IMV, DP, DS, GR, RSS, RSD, RSM, PG, FL, FLR, FG]])
+    X = add_categorical(X)
     X = mmsx.transform(X)
     prediction = np.array([regressor.predict(X)])
     prediction = mmsy.inverse_transform(prediction)[0,0]
     prediction = round(prediction, 2)
+    text = "The permeability is "
     unit = "md"
-    prediction = str(prediction) + " " + unit
+    prediction = text+ str(prediction) + "  " + unit
     return {"prediction": prediction}
 
 # 5. Run the API with uvicorn
