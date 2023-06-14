@@ -6,7 +6,7 @@ gunicorn==20.1.0
 h11==0.14.0
 idna==3.4
 joblib==1.2.0
-numpy==1.23.0
+numpy==1.24.3
 pandas==2.0.1
 pydantic==1.10.8
 python-dateutil==2.8.2
@@ -20,4 +20,3 @@ threadpoolctl==3.1.0
 typing_extensions==4.6.2
 tzdata==2023.3
 uvicorn==0.22.0
-tensorflow==2.12.0
