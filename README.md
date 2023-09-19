@@ -1,3 +1,3 @@
 # perm-backend
 
-This is backend API for permeability prediction. The backend uses FastAPI can performe permeability classification and regression. 
+This is the backend API for permeability prediction. The backend uses FastAPI and can perform permeability classification and regression. 
